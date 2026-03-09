@@ -15,7 +15,8 @@ WORKDIR /app
 RUN addgroup -S app && adduser -S app -G app
 USER app
 
-COPY --from=builder /app/target/*.jar app.jar
+# Pega especificamente o fat JAR gerado pelo Spring Boot (exclui o original)
+COPY --from=builder /app/target/*-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
 
