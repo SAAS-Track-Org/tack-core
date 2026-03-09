@@ -6,9 +6,11 @@ COPY pom.xml .
 RUN mvn dependency:go-offline -q
 
 COPY src ./src
+RUN mvn package -DskipTests -q
 
-# Usa o plugin do Spring Boot para garantir o fat JAR
-RUN mvn spring-boot:repackage -DskipTests -q
+# Renomeia o fat JAR para um nome fixo, excluindo o .original
+RUN ls /app/target/ && \
+    cp $(ls /app/target/*.jar | grep -v '\.original$' | head -1) /app/app.jar
 
 # ── Stage 2: Runtime ─────────────────────────────────────────────────────────
 FROM eclipse-temurin:21-jre-alpine
@@ -17,7 +19,7 @@ WORKDIR /app
 RUN addgroup -S app && adduser -S app -G app
 USER app
 
-COPY --from=builder /app/target/*.jar app.jar
+COPY --from=builder /app/app.jar app.jar
 
 EXPOSE 8080
 
