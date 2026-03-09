@@ -6,10 +6,9 @@ COPY pom.xml .
 RUN mvn dependency:go-offline -q
 
 COPY src ./src
-RUN mvn package -DskipTests -q
 
-# Debug: lista tudo que foi gerado
-RUN echo "=== Arquivos no target ===" && ls -la /app/target/
+# Usa o plugin do Spring Boot para garantir o fat JAR
+RUN mvn spring-boot:repackage -DskipTests -q
 
 # ── Stage 2: Runtime ─────────────────────────────────────────────────────────
 FROM eclipse-temurin:21-jre-alpine
@@ -19,8 +18,6 @@ RUN addgroup -S app && adduser -S app -G app
 USER app
 
 COPY --from=builder /app/target/*.jar app.jar
-
-RUN jar tf app.jar | grep "MANIFEST" || echo "MANIFEST NOT FOUND"
 
 EXPOSE 8080
 
