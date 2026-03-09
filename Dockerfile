@@ -8,21 +8,19 @@ RUN mvn dependency:go-offline -q
 COPY src ./src
 RUN mvn package -DskipTests -q
 
-# Mostra o que foi gerado no target para debug
-RUN ls -la /app/target/*.jar
+# Debug: lista tudo que foi gerado
+RUN echo "=== Arquivos no target ===" && ls -la /app/target/
 
 # ── Stage 2: Runtime ─────────────────────────────────────────────────────────
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 RUN addgroup -S app && adduser -S app -G app
-
-# spring-boot:repackage gera o fat JAR — usa o repackaged diretamente
-COPY --from=builder /app/target/*.jar /tmp/
-RUN find /tmp -name "*.jar" ! -name "*.original" -exec cp {} app.jar \; && \
-    chown app:app app.jar
-
 USER app
+
+COPY --from=builder /app/target/*.jar app.jar
+
+RUN jar tf app.jar | grep "MANIFEST" || echo "MANIFEST NOT FOUND"
 
 EXPOSE 8080
 
