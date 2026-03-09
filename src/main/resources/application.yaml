@@ -1,0 +1,29 @@
+server:
+  servlet:
+    context-path: /api/v1
+
+spring:
+  application:
+    name: tracking-core
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/track_db
+    username: track_user
+    password: track_pass
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        default_schema: delivery
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    schemas: delivery
+    default-schema: delivery

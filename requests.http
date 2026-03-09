@@ -1,0 +1,179 @@
+### ============================================================
+### POST /api/v1/delivery - Criar entrega
+### ============================================================
+
+### Cenário 1: Tudo novo (deliveryman, client, address e products novos)
+POST http://localhost:8080/api/v1/delivery
+Content-Type: application/json
+
+{
+  "deliveryman": {
+    "id": null,
+    "name": "Carlos Silva",
+    "phoneNumber": "11999990001"
+  },
+  "orders": [
+    {
+      "client": {
+        "id": null,
+        "name": "João Costa",
+        "phoneNumber": "11988880001",
+        "address": {
+          "id": null,
+          "street": "Rua das Flores",
+          "number": "123",
+          "complement": "Apto 4",
+          "neighborhood": "Centro",
+          "city": "São Paulo",
+          "state": "SP",
+          "zipCode": "01310100",
+          "country": "Brasil"
+        }
+      },
+      "notes": "Entregar no período da tarde",
+      "products": [
+        {
+          "id": null,
+          "name": "Notebook Dell",
+          "description": "Notebook Dell Inspiron 15",
+          "price": 3500.00,
+          "quantity": 1
+        },
+        {
+          "id": null,
+          "name": "Mouse Sem Fio",
+          "description": "Mouse Logitech MX Master",
+          "price": 350.00,
+          "quantity": 2
+        }
+      ]
+    }
+  ]
+}
+
+###
+
+### Cenário 2: Deliveryman existente, client e address existentes, produto novo
+### (substitua os UUIDs pelos retornados no cenário 1)
+POST http://localhost:8080/api/v1/delivery
+Content-Type: application/json
+
+{
+  "deliveryman": {
+    "id": "00000000-0000-0000-0000-000000000001",
+    "name": null,
+    "phoneNumber": null
+  },
+  "orders": [
+    {
+      "client": {
+        "id": "00000000-0000-0000-0000-000000000002",
+        "name": null,
+        "phoneNumber": null,
+        "address": {
+          "id": "00000000-0000-0000-0000-000000000003",
+          "street": null,
+          "number": null,
+          "complement": null,
+          "neighborhood": null,
+          "city": null,
+          "state": null,
+          "zipCode": null,
+          "country": null
+        }
+      },
+      "notes": "Frágil - manusear com cuidado",
+      "products": [
+        {
+          "id": null,
+          "name": "Teclado Mecânico",
+          "description": "Teclado Keychron K2",
+          "price": 599.90,
+          "quantity": 1
+        }
+      ]
+    }
+  ]
+}
+
+###
+
+### Cenário 3: Múltiplos pedidos na mesma entrega (tudo novo)
+POST http://localhost:8080/api/v1/delivery
+Content-Type: application/json
+
+{
+  "deliveryman": {
+    "id": null,
+    "name": "Ana Oliveira",
+    "phoneNumber": "11977770001"
+  },
+  "orders": [
+    {
+      "client": {
+        "id": null,
+        "name": "Maria Souza",
+        "phoneNumber": "11966660001",
+        "address": {
+          "id": null,
+          "street": "Av. Paulista",
+          "number": "1000",
+          "complement": "Sala 52",
+          "neighborhood": "Bela Vista",
+          "city": "São Paulo",
+          "state": "SP",
+          "zipCode": "01310100",
+          "country": "Brasil"
+        }
+      },
+      "notes": "Pedido urgente",
+      "products": [
+        {
+          "id": null,
+          "name": "Monitor LG 27",
+          "description": "Monitor LG UltraWide 27 polegadas",
+          "price": 2100.00,
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "client": {
+        "id": null,
+        "name": "Pedro Alves",
+        "phoneNumber": "11955550001",
+        "address": {
+          "id": null,
+          "street": "Rua Augusta",
+          "number": "500",
+          "complement": null,
+          "neighborhood": "Consolação",
+          "city": "São Paulo",
+          "state": "SP",
+          "zipCode": "01305000",
+          "country": "Brasil"
+        }
+      },
+      "notes": null,
+      "products": [
+        {
+          "id": null,
+          "name": "Headset Sony",
+          "description": "Headset Sony WH-1000XM5",
+          "price": 1899.90,
+          "quantity": 1
+        },
+        {
+          "id": null,
+          "name": "Cabo HDMI",
+          "description": "Cabo HDMI 2.1 2 metros",
+          "price": 89.90,
+          "quantity": 3
+        }
+      ]
+    }
+  ]
+}
+
+###
+
