@@ -32,17 +32,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(@NonNull final HttpServletRequest request) {
-        final String path   = request.getRequestURI();
+        final String path = request.getRequestURI();
         final String method = request.getMethod();
 
         return (method.equals("POST") && path.equals("/api/v1/auth/login"))
-            || (method.equals("GET")  && path.equals("/api/v1/auth/config"))
-            || (method.equals("GET")  && path.startsWith("/api/v1/delivery/track/"))
-            || (method.equals("GET")  && path.startsWith("/api/v1/delivery/driver/"))
-            || (method.equals("GET")  && path.startsWith("/api/v1/track/"))
-            || path.startsWith("/swagger-ui")
-            || path.startsWith("/v3/api-docs")
-            || path.startsWith("/actuator");
+                || (method.equals("GET") && path.equals("/api/v1/auth/config"))
+                || (method.equals("GET") && path.startsWith("/api/v1/delivery/track/"))
+                || (method.equals("GET") && path.startsWith("/api/v1/delivery/driver/"))
+                || (method.equals("GET") && path.startsWith("/api/v1/track/"))
+                || path.startsWith("/api/v1/ws")
+                || path.startsWith("/swagger-ui")
+                || path.startsWith("/v3/api-docs")
+                || path.startsWith("/actuator");
     }
 
     @Override
@@ -66,7 +67,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        final var claims  = jwtTokenProvider.parseToken(token);
+        final var claims = jwtTokenProvider.parseToken(token);
         final var subject = claims.getSubject();
 
         final var authentication = new UsernamePasswordAuthenticationToken(
@@ -83,9 +84,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         response.setCharacterEncoding("UTF-8");
 
         final var body = Map.of(
-                "status",    401,
-                "error",     "Unauthorized",
-                "message",   message,
+                "status", 401,
+                "error", "Unauthorized",
+                "message", message,
                 "timestamp", LocalDateTime.now().toString()
         );
 

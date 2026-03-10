@@ -42,6 +42,8 @@ public class SecurityConfig {
                         .requestMatchers(GET,  "/delivery/track/**").permitAll()
                         .requestMatchers(GET,  "/delivery/driver/**").permitAll()
                         .requestMatchers(GET,  "/track/**").permitAll()
+                        // ── WebSocket (public) ───────────────────────────────
+                        .requestMatchers("/ws/**").permitAll()
                         // ── Swagger / Actuator (public) ────────────────────
                         .requestMatchers(
                                 "/swagger-ui/**",
