@@ -27,3 +27,6 @@ spring:
     baseline-on-migrate: true
     schemas: delivery
     default-schema: delivery
+
+jwt:
+  secret: ${JWT_SECRET}

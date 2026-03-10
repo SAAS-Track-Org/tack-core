@@ -4,6 +4,7 @@ import com.example.trackingcore.application.mapper.TrackOutputMapper;
 import com.example.trackingcore.application.usecase.UseCase;
 import com.example.trackingcore.application.usecase.delivery.input.ClientTrackInput;
 import com.example.trackingcore.application.usecase.delivery.output.ClientTrackOutput;
+import com.example.trackingcore.domain.exception.NotFoundException;
 import com.example.trackingcore.domain.model.enums.OrderStatus;
 import com.example.trackingcore.domain.port.DeliveryGateway;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class GetClientTrackUseCase extends UseCase<ClientTrackInput, ClientTrack
     public ClientTrackOutput execute(final ClientTrackInput input) {
 
         final var delivery = deliveryGateway.findByPublicCodeClient(input.publicCodeClient())
-                .orElseThrow(() -> new IllegalArgumentException(
+                .orElseThrow(() -> new NotFoundException(
                         "Delivery not found for public code: " + input.publicCodeClient()
                 ));
 
@@ -34,7 +35,7 @@ public class GetClientTrackUseCase extends UseCase<ClientTrackInput, ClientTrack
                         && o.getDeliveryStatus() != OrderStatus.STANDBY)
                 .filter(o -> o.getCode().equals(input.orderCode()))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(
+                .orElseThrow(() -> new NotFoundException(
                         "Order not found with code: " + input.orderCode()
                 ));
 

@@ -101,6 +101,8 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd ~/mototrack
+            
+            docker compose down -v
 
             echo "=== Status atual ==="
             docker compose ps
