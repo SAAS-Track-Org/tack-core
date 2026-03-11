@@ -4,6 +4,7 @@ import java.util.UUID;
 
 public record UpdateDeliverymanInput(
         UUID deliveryId,
+        UUID appUserId,
         String name,
         String phoneNumber
 ) {}

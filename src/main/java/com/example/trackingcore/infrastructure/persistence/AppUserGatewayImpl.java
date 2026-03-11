@@ -9,6 +9,7 @@ import com.example.trackingcore.infrastructure.persistence.paymentmethod.Payment
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class AppUserGatewayImpl implements AppUserGateway {
@@ -28,6 +29,12 @@ public class AppUserGatewayImpl implements AppUserGateway {
     }
 
     @Override
+    public Optional<AppUser> findById(final UUID id) {
+        return appUserJpaRepository.findById(id)
+                .map(MAPPER::fromEntity);
+    }
+
+    @Override
     public AppUser save(final AppUser appUser) {
         // If entity already exists, load the managed instance and replace the collection
         // so that JPA generates the correct DELETE+INSERT on the join table.
@@ -35,6 +42,8 @@ public class AppUserGatewayImpl implements AppUserGateway {
                 .map(managed -> {
                     final var incoming = MAPPER.toEntity(appUser);
                     managed.setEmail(incoming.getEmail());
+                    managed.setEstablishmentName(incoming.getEstablishmentName());
+                    managed.setAddress(incoming.getAddress());
                     managed.getPaymentMethods().clear();
                     managed.getPaymentMethods().addAll(
                             incoming.getPaymentMethods().stream()

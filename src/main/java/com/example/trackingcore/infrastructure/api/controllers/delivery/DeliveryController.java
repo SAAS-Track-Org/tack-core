@@ -1,34 +1,10 @@
 package com.example.trackingcore.infrastructure.api.controllers.delivery;
 
-import com.example.trackingcore.application.usecase.delivery.AddOrderToDeliveryUseCase;
-import com.example.trackingcore.application.usecase.delivery.CreateDeliveryUseCase;
-import com.example.trackingcore.application.usecase.delivery.DriverDeliveryUseCase;
-import com.example.trackingcore.application.usecase.delivery.GetAllDeliveriesUseCase;
-import com.example.trackingcore.application.usecase.delivery.GetDeliveryDetailUseCase;
-import com.example.trackingcore.application.usecase.delivery.TrackDeliveryUseCase;
-import com.example.trackingcore.application.usecase.delivery.LinkOrderToDeliveryUseCase;
-import com.example.trackingcore.application.usecase.delivery.UpdateDeliverymanUseCase;
-import com.example.trackingcore.application.usecase.delivery.UpdateLocationUseCase;
-import com.example.trackingcore.application.usecase.delivery.UpdateOrderStatusUseCase;
-import com.example.trackingcore.application.usecase.delivery.UpdateOrderUseCase;
-import com.example.trackingcore.application.usecase.delivery.input.DriverDeliveryInput;
-import com.example.trackingcore.application.usecase.delivery.input.LinkOrderToDeliveryInput;
-import com.example.trackingcore.application.usecase.delivery.input.TrackDeliveryInput;
-import com.example.trackingcore.application.usecase.delivery.input.UpdateDeliverymanInput;
-import com.example.trackingcore.application.usecase.delivery.input.UpdateLocationInput;
-import com.example.trackingcore.application.usecase.delivery.input.UpdateOrderStatusInput;
+import com.example.trackingcore.application.usecase.delivery.*;
+import com.example.trackingcore.application.usecase.delivery.input.*;
 import com.example.trackingcore.infrastructure.api.DeliveryApi;
-import com.example.trackingcore.infrastructure.api.controllers.delivery.request.UpdateDeliverymanRequest;
-import com.example.trackingcore.infrastructure.api.controllers.delivery.request.UpdateLocationRequest;
-import com.example.trackingcore.infrastructure.api.controllers.delivery.request.UpdateOrderRequest;
-import com.example.trackingcore.infrastructure.api.controllers.delivery.request.UpdateOrderStatusRequest;
-import com.example.trackingcore.infrastructure.api.controllers.delivery.response.AddOrderResponse;
-import com.example.trackingcore.infrastructure.api.controllers.delivery.response.CreateDeliveryResponse;
-import com.example.trackingcore.infrastructure.api.controllers.delivery.response.DeliveryDetailResponse;
-import com.example.trackingcore.infrastructure.api.controllers.delivery.response.DeliverySummaryResponse;
-import com.example.trackingcore.infrastructure.api.controllers.delivery.response.DriverDeliveryResponse;
-import com.example.trackingcore.infrastructure.api.controllers.delivery.response.TrackDeliveryResponse;
-import com.example.trackingcore.infrastructure.api.controllers.delivery.response.UpdateLocationResponse;
+import com.example.trackingcore.infrastructure.api.controllers.delivery.request.*;
+import com.example.trackingcore.infrastructure.api.controllers.delivery.response.*;
 import com.example.trackingcore.infrastructure.mapper.DeliveryInfraMapper;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -79,21 +55,21 @@ public class DeliveryController implements DeliveryApi {
     }
 
     @Override
-    public List<DeliverySummaryResponse> getAllDeliveries() {
-        return getAllDeliveriesUseCase.execute(null).stream()
+    public List<DeliverySummaryResponse> getAllDeliveries(final UUID appUserId) {
+        return getAllDeliveriesUseCase.execute(appUserId).stream()
                 .map(DELIVERY_INFRA_MAPPER::toDeliverySummaryResponse)
                 .toList();
     }
 
     @Override
-    public CreateDeliveryResponse createDelivery() {
-        final var output = createDeliveryUseCase.execute(null);
+    public CreateDeliveryResponse createDelivery(final UUID appUserId) {
+        final var output = createDeliveryUseCase.execute(appUserId);
         return DELIVERY_INFRA_MAPPER.toCreateDeliveryResponse(output);
     }
 
     @Override
-    public DeliveryDetailResponse getDeliveryDetail(final UUID deliveryId) {
-        final var output = getDeliveryDetailUseCase.execute(deliveryId);
+    public DeliveryDetailResponse getDeliveryDetail(final UUID appUserId, final UUID deliveryId) {
+        final var output = getDeliveryDetailUseCase.execute(new GetDeliveryDetailInput(deliveryId, appUserId));
         return DELIVERY_INFRA_MAPPER.toDeliveryDetailResponse(output);
     }
 
@@ -125,10 +101,11 @@ public class DeliveryController implements DeliveryApi {
 
     @Override
     public DeliveryDetailResponse updateDeliveryman(
+            final UUID appUserId,
             final UUID deliveryId,
             final UpdateDeliverymanRequest request
     ) {
-        final var input = new UpdateDeliverymanInput(deliveryId, request.name(), request.phoneNumber());
+        final var input = new UpdateDeliverymanInput(deliveryId, appUserId, request.name(), request.phoneNumber());
         final var output = updateDeliverymanUseCase.execute(input);
         return DELIVERY_INFRA_MAPPER.toDeliveryDetailResponse(output);
     }
@@ -163,4 +140,3 @@ public class DeliveryController implements DeliveryApi {
         return new UpdateLocationResponse(output.lat(), output.lng());
     }
 }
-

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,6 +23,7 @@ import java.util.Map;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private static final String BEARER_PREFIX = "Bearer ";
+    private static final String HEADER_USER_ID = "X-User-Id";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -32,7 +34,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(@NonNull final HttpServletRequest request) {
-        final String path = request.getRequestURI();
+        final String path   = request.getRequestURI();
         final String method = request.getMethod();
 
         return (method.equals("POST") && path.equals("/api/v1/auth/login"))
@@ -69,15 +71,25 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        final var claims = jwtTokenProvider.parseToken(token);
+        final var claims  = jwtTokenProvider.parseToken(token);
         final var subject = claims.getSubject();
+        final var userId  = claims.get("userId", String.class);
 
         final var authentication = new UsernamePasswordAuthenticationToken(
                 subject, null, List.of()
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        filterChain.doFilter(request, response);
+        // Wrap the request to expose X-User-Id so controllers can read it via @RequestHeader
+        final HttpServletRequest wrappedRequest = new HttpServletRequestWrapper(request) {
+            @Override
+            public String getHeader(final String name) {
+                if (HEADER_USER_ID.equalsIgnoreCase(name)) return userId;
+                return super.getHeader(name);
+            }
+        };
+
+        filterChain.doFilter(wrappedRequest, response);
     }
 
     private void writeUnauthorized(final HttpServletResponse response, final String message) throws IOException {
@@ -86,9 +98,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         response.setCharacterEncoding("UTF-8");
 
         final var body = Map.of(
-                "status", 401,
-                "error", "Unauthorized",
-                "message", message,
+                "status",    401,
+                "error",     "Unauthorized",
+                "message",   message,
                 "timestamp", LocalDateTime.now().toString()
         );
 

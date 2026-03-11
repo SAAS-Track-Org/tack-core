@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
@@ -30,15 +29,18 @@ public interface DeliveryApi {
 
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    List<DeliverySummaryResponse> getAllDeliveries();
+    List<DeliverySummaryResponse> getAllDeliveries(@RequestHeader("X-User-Id") UUID appUserId);
 
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    CreateDeliveryResponse createDelivery();
+    CreateDeliveryResponse createDelivery(@RequestHeader("X-User-Id") UUID appUserId);
 
     @GetMapping(value = "/{deliveryId}", produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    DeliveryDetailResponse getDeliveryDetail(@PathVariable UUID deliveryId);
+    DeliveryDetailResponse getDeliveryDetail(
+            @RequestHeader("X-User-Id") UUID appUserId,
+            @PathVariable UUID deliveryId
+    );
 
     @PostMapping(value = "/{deliveryId}/order", produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
@@ -70,6 +72,7 @@ public interface DeliveryApi {
     @PutMapping(value = "/{deliveryId}/deliveryman", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     DeliveryDetailResponse updateDeliveryman(
+            @RequestHeader("X-User-Id") UUID appUserId,
             @PathVariable UUID deliveryId,
             @RequestBody UpdateDeliverymanRequest request
     );
@@ -85,5 +88,4 @@ public interface DeliveryApi {
     @PatchMapping(value = "/{publicCodeDeliveryman}/location", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     UpdateLocationResponse updateLocation(@PathVariable UUID publicCodeDeliveryman, @RequestBody UpdateLocationRequest request);
-
 }

@@ -12,9 +12,13 @@ public interface DeliveryGateway {
 
     Optional<Delivery> findById(UUID id);
 
+    Optional<Delivery> findByIdAndAppUserId(UUID id, UUID appUserId);
+
     Optional<Delivery> findByPublicCodeClient(UUID publicCodeClient);
 
     Optional<Delivery> findByPublicCodeDeliveryman(UUID publicCodeDeliveryman);
 
     List<Delivery> findAll();
+
+    List<Delivery> findAllByAppUserId(UUID appUserId);
 }

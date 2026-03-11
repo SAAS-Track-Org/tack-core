@@ -84,6 +84,7 @@ public interface DeliveryInfraMapper {
         if (entity == null) return null;
         return Delivery.with(
                 entity.getId(),
+                entity.getAppUser() != null ? entity.getAppUser().getId() : null,
                 entity.getPublicCodeClient(),
                 entity.getPublicCodeDeliveryman(),
                 DeliveryStatus.valueOf(entity.getStatus()),
@@ -97,6 +98,7 @@ public interface DeliveryInfraMapper {
         );
     }
 
+    @Mapping(target = "appUser",     ignore = true)
     @Mapping(target = "status",      expression = "java(domain.getStatus().name())")
     @Mapping(target = "deliveryman", source = "deliveryman")
     @Mapping(target = "orders",      source = "orders")

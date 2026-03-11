@@ -11,9 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
-public class CreateDeliveryUseCase extends UseCase<Void, CreateDeliveryOutput> {
+public class CreateDeliveryUseCase extends UseCase<UUID, CreateDeliveryOutput> {
 
     private final DeliveryGateway deliveryGateway;
     private final DeliverymanGateway deliverymanGateway;
@@ -34,10 +35,10 @@ public class CreateDeliveryUseCase extends UseCase<Void, CreateDeliveryOutput> {
 
     @Override
     @Transactional
-    public CreateDeliveryOutput execute(final Void input) {
+    public CreateDeliveryOutput execute(final UUID appUserId) {
         final var deliveryman = resolveDeliveryman();
         final var orders = resolveOrders();
-        final var delivery = Delivery.create(deliveryman, orders);
+        final var delivery = Delivery.create(appUserId, deliveryman, orders);
         final var savedDelivery = deliveryGateway.save(delivery);
 
         final var orderOutputs = savedDelivery.getOrders().stream()

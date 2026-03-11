@@ -24,6 +24,4 @@ CREATE TABLE app_user_payment_method
     PRIMARY KEY (app_user_id, payment_method_id)
 );
 
--- Remove coluna legada de string separada por vírgula
-ALTER TABLE app_user DROP COLUMN payment_methods;
 

@@ -2,7 +2,9 @@ package com.example.trackingcore.application.usecase.delivery;
 
 import com.example.trackingcore.application.mapper.DeliveryOutputMapper;
 import com.example.trackingcore.application.usecase.UseCase;
+import com.example.trackingcore.application.usecase.delivery.input.GetDeliveryDetailInput;
 import com.example.trackingcore.application.usecase.delivery.output.DeliveryDetailOutput;
+import com.example.trackingcore.domain.exception.NotFoundException;
 import com.example.trackingcore.domain.model.enums.OrderStatus;
 import com.example.trackingcore.domain.port.DeliveryGateway;
 import com.example.trackingcore.domain.port.OrderGateway;
@@ -10,15 +12,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
-public class GetDeliveryDetailUseCase extends UseCase<UUID, DeliveryDetailOutput> {
+public class GetDeliveryDetailUseCase extends UseCase<GetDeliveryDetailInput, DeliveryDetailOutput> {
 
     private static final List<OrderStatus> EXCLUDED_STATUSES = List.of(OrderStatus.DELETED, OrderStatus.STANDBY);
-
     private static final DeliveryOutputMapper MAPPER = DeliveryOutputMapper.INSTANCE;
-
 
     private final DeliveryGateway deliveryGateway;
     private final OrderGateway orderGateway;
@@ -31,12 +30,12 @@ public class GetDeliveryDetailUseCase extends UseCase<UUID, DeliveryDetailOutput
 
     @Override
     @Transactional(readOnly = true)
-    public DeliveryDetailOutput execute(final UUID deliveryId) {
-        final var delivery = deliveryGateway.findById(deliveryId)
-                .orElseThrow(() -> new IllegalArgumentException("Delivery not found: " + deliveryId));
+    public DeliveryDetailOutput execute(final GetDeliveryDetailInput input) {
+        final var delivery = deliveryGateway.findByIdAndAppUserId(input.deliveryId(), input.appUserId())
+                .orElseThrow(() -> NotFoundException.of("Delivery", input.deliveryId()));
 
         final var orderDetails = orderGateway
-                .findByDeliveryIdFiltered(deliveryId, EXCLUDED_STATUSES)
+                .findByDeliveryIdFiltered(input.deliveryId(), EXCLUDED_STATUSES)
                 .stream()
                 .map(MAPPER::toOrderDetailOutput)
                 .toList();

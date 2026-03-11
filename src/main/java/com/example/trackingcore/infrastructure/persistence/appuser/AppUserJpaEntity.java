@@ -35,7 +35,12 @@ public class AppUserJpaEntity {
     )
     private List<PaymentMethodJpaEntity> paymentMethods = new ArrayList<>();
 
+    @Column(name = "establishment_name", length = 255)
+    private String establishmentName;
+
+    @Column(name = "address", length = 500)
+    private String address;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 }
-

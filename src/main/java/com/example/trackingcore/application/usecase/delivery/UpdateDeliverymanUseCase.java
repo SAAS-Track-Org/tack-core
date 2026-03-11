@@ -1,6 +1,7 @@
 package com.example.trackingcore.application.usecase.delivery;
 
 import com.example.trackingcore.application.usecase.UseCase;
+import com.example.trackingcore.application.usecase.delivery.input.GetDeliveryDetailInput;
 import com.example.trackingcore.application.usecase.delivery.input.UpdateDeliverymanInput;
 import com.example.trackingcore.application.usecase.delivery.output.DeliveryDetailOutput;
 import com.example.trackingcore.domain.port.DeliveryGateway;
@@ -43,6 +44,6 @@ public class UpdateDeliverymanUseCase extends UseCase<UpdateDeliverymanInput, De
 
         deliverymanGateway.save(deliveryman.withContact(newName, newPhone));
 
-        return getDeliveryDetailUseCase.execute(input.deliveryId());
+        return getDeliveryDetailUseCase.execute(new GetDeliveryDetailInput(input.deliveryId(), input.appUserId()));
     }
 }

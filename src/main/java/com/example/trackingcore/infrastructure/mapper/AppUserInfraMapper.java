@@ -28,6 +28,8 @@ public interface AppUserInfraMapper {
                 entity.getId(),
                 entity.getEmail(),
                 paymentMethods,
+                entity.getEstablishmentName(),
+                entity.getAddress(),
                 entity.getCreatedAt()
         );
     }
@@ -43,8 +45,9 @@ public interface AppUserInfraMapper {
                 domain.getId(),
                 domain.getEmail(),
                 paymentMethodEntities,
+                domain.getEstablishmentName(),
+                domain.getAddress(),
                 domain.getCreatedAt()
         );
     }
 }
-

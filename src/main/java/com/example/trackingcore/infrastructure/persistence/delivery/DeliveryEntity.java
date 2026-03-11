@@ -1,5 +1,6 @@
 package com.example.trackingcore.infrastructure.persistence.delivery;
 
+import com.example.trackingcore.infrastructure.persistence.appuser.AppUserJpaEntity;
 import com.example.trackingcore.infrastructure.persistence.deliveryman.DeliveryManEntity;
 import com.example.trackingcore.infrastructure.persistence.order.OrderEntity;
 import jakarta.persistence.*;
@@ -33,6 +34,10 @@ public class DeliveryEntity {
 
     @Column(nullable = false)
     private String status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "app_user_id")
+    private AppUserJpaEntity appUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deliveryman_id", nullable = false)

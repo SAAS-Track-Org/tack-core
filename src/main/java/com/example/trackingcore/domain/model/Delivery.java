@@ -12,6 +12,7 @@ import java.util.UUID;
 @Getter
 public class Delivery {
     private final UUID id;
+    private final UUID appUserId;
     private final UUID publicCodeClient;
     private final UUID publicCodeDeliveryman;
     private DeliveryStatus status;
@@ -25,6 +26,7 @@ public class Delivery {
 
     private Delivery(
             UUID id,
+            UUID appUserId,
             UUID publicCodeClient,
             UUID publicCodeDeliveryman,
             DeliveryStatus status,
@@ -36,8 +38,8 @@ public class Delivery {
             LocalDateTime deliveredAt
     ) {
         this.orders = orders;
-
         this.id = id;
+        this.appUserId = appUserId;
         this.publicCodeClient = publicCodeClient;
         this.publicCodeDeliveryman = publicCodeDeliveryman;
         this.status = status;
@@ -52,6 +54,7 @@ public class Delivery {
     }
 
     public static Delivery create(
+            UUID appUserId,
             Deliveryman deliveryman,
             List<Order> orders
     ) {
@@ -61,6 +64,7 @@ public class Delivery {
 
         return new Delivery(
                 id,
+                appUserId,
                 publicCodeClient,
                 publicCodeDeliveryman,
                 DeliveryStatus.CREATED,
@@ -76,6 +80,7 @@ public class Delivery {
 
     public static Delivery with(
             UUID id,
+            UUID appUserId,
             UUID publicCodeClient,
             UUID publicCodeDeliveryman,
             DeliveryStatus status,
@@ -89,6 +94,7 @@ public class Delivery {
     ) {
         return new Delivery(
                 id,
+                appUserId,
                 publicCodeClient,
                 publicCodeDeliveryman,
                 status,
@@ -168,7 +174,7 @@ public class Delivery {
             );
         }
         return new Delivery(
-                id, publicCodeClient, publicCodeDeliveryman,
+                id, appUserId, publicCodeClient, publicCodeDeliveryman,
                 status,
                 deliveryman, orders,
                 lat, lng,

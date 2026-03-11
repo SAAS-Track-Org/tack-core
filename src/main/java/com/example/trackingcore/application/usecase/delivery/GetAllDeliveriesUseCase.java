@@ -8,9 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
-public class GetAllDeliveriesUseCase extends UseCase<Void, List<GetAllDeliveriesOutput>> {
+public class GetAllDeliveriesUseCase extends UseCase<UUID, List<GetAllDeliveriesOutput>> {
 
     private final DeliveryGateway deliveryGateway;
 
@@ -23,8 +24,8 @@ public class GetAllDeliveriesUseCase extends UseCase<Void, List<GetAllDeliveries
 
     @Override
     @Transactional(readOnly = true)
-    public List<GetAllDeliveriesOutput> execute(final Void input) {
-        return deliveryGateway.findAll().stream()
+    public List<GetAllDeliveriesOutput> execute(final UUID appUserId) {
+        return deliveryGateway.findAllByAppUserId(appUserId).stream()
                 .map(MAPPER::toGetAllDeliveriesOutput)
                 .toList();
     }
