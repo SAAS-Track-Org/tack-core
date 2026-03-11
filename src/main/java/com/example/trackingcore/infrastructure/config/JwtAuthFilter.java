@@ -41,6 +41,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 || (method.equals("GET") && path.startsWith("/api/v1/delivery/driver/"))
                 || (method.equals("GET") && path.startsWith("/api/v1/track/"))
                 || (method.equals("PATCH") && path.matches("/api/v1/delivery/.*/location"))
+                || (method.equals("PATCH") && path.matches("/api/v1/track/.*/.*"))
                 || path.startsWith("/api/v1/ws")
                 || path.startsWith("/swagger-ui")
                 || path.startsWith("/v3/api-docs")
