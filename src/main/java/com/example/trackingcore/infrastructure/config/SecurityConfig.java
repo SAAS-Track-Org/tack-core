@@ -14,8 +14,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @EnableWebSecurity
@@ -42,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers(GET,  "/delivery/track/**").permitAll()
                         .requestMatchers(GET,  "/delivery/driver/**").permitAll()
                         .requestMatchers(GET,  "/track/**").permitAll()
+                        .requestMatchers(PATCH, "/delivery/*/location").permitAll()
                         // ── WebSocket (public) ───────────────────────────────
                         .requestMatchers("/ws/**").permitAll()
                         // ── Swagger / Actuator (public) ────────────────────
