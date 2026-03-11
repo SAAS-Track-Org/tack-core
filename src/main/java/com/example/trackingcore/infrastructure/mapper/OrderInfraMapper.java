@@ -15,7 +15,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(uses = {ClientInfraMapper.class, AddressInfraMapper.class, ProductInfraMapper.class})
+@Mapper(uses = {ClientInfraMapper.class, AddressInfraMapper.class})
 public interface OrderInfraMapper {
 
     OrderInfraMapper INSTANCE = Mappers.getMapper(OrderInfraMapper.class);

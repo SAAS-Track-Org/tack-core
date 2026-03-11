@@ -4,31 +4,18 @@ import com.example.trackingcore.application.usecase.UseCase;
 import com.example.trackingcore.application.usecase.delivery.input.TrackDeliveryInput;
 import com.example.trackingcore.application.usecase.delivery.output.TrackDeliveryOutput;
 import com.example.trackingcore.domain.exception.NotFoundException;
-import com.example.trackingcore.domain.model.Order;
 import com.example.trackingcore.domain.model.enums.OrderStatus;
-
-import com.example.trackingcore.domain.model.OrderProduct;
-import com.example.trackingcore.domain.model.Product;
 import com.example.trackingcore.domain.port.DeliveryGateway;
-import com.example.trackingcore.domain.port.OrderProductGateway;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 @Service
 public class TrackDeliveryUseCase extends UseCase<TrackDeliveryInput, TrackDeliveryOutput> {
 
     private final DeliveryGateway deliveryGateway;
-    private final OrderProductGateway orderProductGateway;
 
-    public TrackDeliveryUseCase(
-            final DeliveryGateway deliveryGateway,
-            final OrderProductGateway orderProductGateway
-    ) {
+    public TrackDeliveryUseCase(final DeliveryGateway deliveryGateway) {
         this.deliveryGateway = deliveryGateway;
-        this.orderProductGateway = orderProductGateway;
     }
 
     @Override
@@ -48,12 +35,7 @@ public class TrackDeliveryUseCase extends UseCase<TrackDeliveryInput, TrackDeliv
                         "Order not found with code: " + input.orderCode()
                 ));
 
-        final var products = orderProductGateway.findByOrderId(order.getId())
-                .stream()
-                .map(OrderProduct::getProduct)
-                .toList();
-
-        final var orderOutput = buildOrderOutput(order, products);
+        final var orderOutput = new TrackDeliveryOutput.OrderOutput(order.getCode());
 
         return new TrackDeliveryOutput(
                 delivery.getStatus().name(),
@@ -61,22 +43,6 @@ public class TrackDeliveryUseCase extends UseCase<TrackDeliveryInput, TrackDeliv
                 delivery.getCurrentLat(),
                 delivery.getCurrentLng(),
                 orderOutput
-        );
-    }
-
-    private TrackDeliveryOutput.OrderOutput buildOrderOutput(final Order order, final List<Product> products) {
-        final var totalAmount = products.stream()
-                .map(Product::getPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        final var productOutputs = products.stream()
-                .map(p -> new TrackDeliveryOutput.ProductOutput(p.getName(), p.getPrice()))
-                .toList();
-
-        return new TrackDeliveryOutput.OrderOutput(
-                order.getCode(),
-                totalAmount,
-                productOutputs
         );
     }
 }

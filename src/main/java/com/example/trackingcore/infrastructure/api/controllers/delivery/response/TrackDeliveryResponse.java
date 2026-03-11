@@ -11,8 +11,6 @@ public record TrackDeliveryResponse(
         OrderResponse order
 ) {
     public record OrderResponse(
-            String orderCode,
-            BigDecimal totalAmount,
-            List<ProductResponse> products
+            String orderCode
     ) {}
 }
