@@ -1,5 +1,6 @@
 package com.example.trackingcore.application.usecase.delivery.output;
 
+import com.example.trackingcore.domain.model.enums.AddressStatus;
 import com.example.trackingcore.domain.model.enums.OrderStatus;
 import com.example.trackingcore.domain.model.enums.PaymentMethod;
 
@@ -18,6 +19,7 @@ public record DriverDeliveryOutput(
             String clientName,
             String clientPhone,
             OrderStatus deliveryStatus,
+            AddressStatus addressStatus,
             String notes,
             BigDecimal totalAmount,
             PaymentMethod paymentMethod,

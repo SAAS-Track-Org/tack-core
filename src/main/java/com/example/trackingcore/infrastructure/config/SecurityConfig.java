@@ -36,12 +36,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // ── Auth (public) ──────────────────────────────────
                         .requestMatchers(POST, "/auth/login").permitAll()
-                        .requestMatchers(GET,  "/auth/config").permitAll()
+                        .requestMatchers(GET, "/auth/config").permitAll()
                         // ── Tracking (public) ──────────────────────────────
-                        .requestMatchers(GET,  "/delivery/track/**").permitAll()
-                        .requestMatchers(GET,  "/delivery/driver/**").permitAll()
-                        .requestMatchers(GET,  "/track/**").permitAll()
+                        .requestMatchers(GET, "/delivery/track/**").permitAll()
+                        .requestMatchers(GET, "/delivery/driver/**").permitAll()
+                        .requestMatchers(GET, "/track/**").permitAll()
                         .requestMatchers(PATCH, "/delivery/*/location").permitAll()
+                        .requestMatchers(PATCH, "/delivery/*/order/*/status").permitAll()
                         .requestMatchers(PATCH, "/track/*/*").permitAll()
                         // ── WebSocket (public) ───────────────────────────────
                         .requestMatchers("/ws/**").permitAll()

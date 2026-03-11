@@ -2,6 +2,7 @@ package com.example.trackingcore.infrastructure.api.exception;
 
 import com.example.trackingcore.domain.exception.BusinessException;
 import com.example.trackingcore.domain.exception.DomainException;
+import com.example.trackingcore.domain.exception.InvalidDeliveryStateException;
 import com.example.trackingcore.domain.exception.NotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -40,6 +41,25 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
+
+    // -------------------------------------------------------------------------
+    // 409 - Conflict (invalid delivery state transition)
+    // -------------------------------------------------------------------------
+
+    @ExceptionHandler(InvalidDeliveryStateException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidDeliveryStateException(
+            final InvalidDeliveryStateException ex,
+            final HttpServletRequest request
+    ) {
+        log.warn("InvalidDeliveryStateException: {}", ex.getMessage());
+        final var body = ApiErrorResponse.of(
+                HttpStatus.CONFLICT.value(),
+                "Conflict",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
     }
 
     // -------------------------------------------------------------------------

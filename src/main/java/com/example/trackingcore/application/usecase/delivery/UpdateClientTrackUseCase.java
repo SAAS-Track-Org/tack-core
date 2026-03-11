@@ -33,19 +33,19 @@ public class UpdateClientTrackUseCase extends UseCase<UpdateClientTrackInput, Cl
     @Override
     @Transactional
     public ClientTrackOutput execute(final UpdateClientTrackInput input) {
-        final var delivery = deliveryGateway.findByPublicCodeClient(input.publicCodeClient())
+
+        final var result = deliveryGateway
+                .findTrackByPublicCodeClient(input.publicCodeClient(), input.orderCode())
                 .orElseThrow(() -> new NotFoundException(
                         "Delivery not found for public code: " + input.publicCodeClient()
                 ));
 
-        final var order = delivery.getOrders().stream()
-                .filter(o -> o.getDeliveryStatus() != OrderStatus.DELETED
-                        && o.getDeliveryStatus() != OrderStatus.STANDBY)
-                .filter(o -> o.getCode().equals(input.orderCode()))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException(
-                        "Order not found with code: " + input.orderCode()
-                ));
+        if (result.order() == null) {
+            throw new NotFoundException("Order not found with code: " + input.orderCode());
+        }
+
+        final var order = result.order();
+        final var delivery = result.delivery();
 
         if (order.getDeliveryStatus() == OrderStatus.ARRIVING || order.getDeliveryStatus() == OrderStatus.DELIVERED) {
             throw new IllegalStateException(
@@ -54,19 +54,30 @@ public class UpdateClientTrackUseCase extends UseCase<UpdateClientTrackInput, Cl
         }
 
         final Address address = buildAddress(input.address());
-        final var saved = orderGateway.save(
-                order.update(order.getNotes(), order.getTotalAmount(), input.paymentMethod(), address)
+
+        final var updatedOrder = order.updateClientTrackData(
+                input.clientName(),
+                input.clientPhone(),
+                input.paymentMethod(),
+                address
         );
 
-        return TrackOutputMapper.INSTANCE.toClientTrackOutput(saved, delivery);
+        final var saved = orderGateway.save(updatedOrder);
+
+        return TrackOutputMapper.INSTANCE.toClientTrackOutput(saved, delivery, result.availablePaymentMethods());
     }
 
     private Address buildAddress(final UpdateClientTrackInput.AddressInput input) {
         if (input == null) return null;
         return addressGateway.save(Address.create(
-                input.street(), input.number(), input.complement(),
-                input.neighborhood(), input.city(), input.state(),
-                input.zipCode(), input.country()
+                input.street(),
+                input.number(),
+                input.complement(),
+                input.neighborhood(),
+                input.city(),
+                input.state(),
+                input.zipCode(),
+                input.country()
         ));
     }
 }

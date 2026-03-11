@@ -1,5 +1,6 @@
 package com.example.trackingcore.domain.model;
 
+import com.example.trackingcore.domain.exception.InvalidDeliveryStateException;
 import com.example.trackingcore.domain.model.enums.DeliveryStatus;
 import com.example.trackingcore.domain.model.enums.OrderStatus;
 import lombok.Getter;
@@ -169,7 +170,7 @@ public class Delivery {
 
     public Delivery updateLocation(final BigDecimal lat, final BigDecimal lng) {
         if (status != DeliveryStatus.CREATED && this.status != DeliveryStatus.IN_TRANSIT) {
-            throw new IllegalStateException(
+            throw new InvalidDeliveryStateException(
                     "Cannot update location for delivery with status: " + this.status
             );
         }

@@ -21,4 +21,11 @@ public interface DeliveryGateway {
     List<Delivery> findAll();
 
     List<Delivery> findAllByAppUserId(UUID appUserId);
+
+    /**
+     * Fetches the delivery by publicCodeClient together with the AppUser's payment methods
+     * in a single query. The matched order (by orderCode) and available payment methods
+     * are packaged in the result — no extra round-trips needed.
+     */
+    Optional<DeliveryTrackResult> findTrackByPublicCodeClient(UUID publicCodeClient, String orderCode);
 }

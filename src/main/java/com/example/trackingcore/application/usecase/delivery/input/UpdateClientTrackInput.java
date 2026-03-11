@@ -7,6 +7,8 @@ import java.util.UUID;
 public record UpdateClientTrackInput(
         UUID publicCodeClient,
         String orderCode,
+        String clientName,
+        String clientPhone,
         PaymentMethod paymentMethod,
         AddressInput address
 ) {

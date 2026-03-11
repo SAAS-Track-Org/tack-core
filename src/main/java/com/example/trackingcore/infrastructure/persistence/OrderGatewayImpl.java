@@ -3,7 +3,9 @@ package com.example.trackingcore.infrastructure.persistence;
 import com.example.trackingcore.domain.model.Order;
 import com.example.trackingcore.domain.model.enums.OrderStatus;
 import com.example.trackingcore.domain.port.OrderGateway;
+import com.example.trackingcore.infrastructure.mapper.ClientInfraMapper;
 import com.example.trackingcore.infrastructure.mapper.OrderInfraMapper;
+import com.example.trackingcore.infrastructure.persistence.client.ClientRepository;
 import com.example.trackingcore.infrastructure.persistence.delivery.DeliveryRepository;
 import com.example.trackingcore.infrastructure.persistence.order.OrderRepository;
 import org.springframework.stereotype.Component;
@@ -18,19 +20,29 @@ import static org.apache.commons.lang3.RandomStringUtils.insecure;
 public class OrderGatewayImpl implements OrderGateway {
 
     private static final OrderInfraMapper ORDER_INFRA_MAPPER = OrderInfraMapper.INSTANCE;
+    private static final ClientInfraMapper CLIENT_INFRA_MAPPER = ClientInfraMapper.INSTANCE;
     private static final int PREFIX_LENGTH = 3;
 
     private final OrderRepository orderRepository;
     private final DeliveryRepository deliveryRepository;
+    private final ClientRepository clientRepository;
 
-    public OrderGatewayImpl(final OrderRepository orderRepository,
-                            final DeliveryRepository deliveryRepository) {
+    public OrderGatewayImpl(
+            final OrderRepository orderRepository,
+            final DeliveryRepository deliveryRepository,
+            final ClientRepository clientRepository
+    ) {
         this.orderRepository = orderRepository;
         this.deliveryRepository = deliveryRepository;
+        this.clientRepository = clientRepository;
     }
 
     @Override
     public Order save(final Order order) {
+        // Persist client updates (name / phone) — no cascade on the @ManyToOne
+        if (order.getClient() != null) {
+            clientRepository.save(CLIENT_INFRA_MAPPER.toEntity(order.getClient()));
+        }
         return ORDER_INFRA_MAPPER.fromEntity(
                 orderRepository.save(ORDER_INFRA_MAPPER.toEntity(order))
         );

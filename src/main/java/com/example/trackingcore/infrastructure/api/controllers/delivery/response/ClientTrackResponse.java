@@ -6,6 +6,7 @@ import com.example.trackingcore.domain.model.enums.OrderStatus;
 import com.example.trackingcore.domain.model.enums.PaymentMethod;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 public record ClientTrackResponse(
@@ -16,6 +17,7 @@ public record ClientTrackResponse(
         AddressStatus addressStatus,
         AddressDetail address,
         PaymentMethod paymentMethod,
+        List<PaymentMethod> availablePaymentMethods,
         BigDecimal totalAmount,
         String notes,
         DeliveryInfo delivery

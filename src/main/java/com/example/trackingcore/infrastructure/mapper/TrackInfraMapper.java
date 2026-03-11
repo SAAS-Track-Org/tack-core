@@ -34,6 +34,8 @@ public interface TrackInfraMapper {
 
     @Mapping(target = "publicCodeClient", source = "publicCodeClient")
     @Mapping(target = "orderCode",        source = "orderCode")
+    @Mapping(target = "clientName",       source = "request.clientName")
+    @Mapping(target = "clientPhone",      source = "request.clientPhone")
     @Mapping(target = "paymentMethod",    source = "request.paymentMethod")
     @Mapping(target = "address",          source = "request.address")
     UpdateClientTrackInput toUpdateClientTrackInput(UUID publicCodeClient, String orderCode, UpdateClientTrackRequest request);

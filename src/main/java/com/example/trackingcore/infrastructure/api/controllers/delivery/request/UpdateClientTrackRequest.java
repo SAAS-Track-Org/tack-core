@@ -4,6 +4,8 @@ import com.example.trackingcore.domain.model.enums.PaymentMethod;
 import jakarta.validation.constraints.NotBlank;
 
 public record UpdateClientTrackRequest(
+        String clientName,
+        String clientPhone,
         PaymentMethod paymentMethod,
         AddressRequest address
 ) {

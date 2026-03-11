@@ -1,7 +1,10 @@
 package com.example.trackingcore.infrastructure.persistence;
 
 import com.example.trackingcore.domain.model.Delivery;
+import com.example.trackingcore.domain.model.enums.OrderStatus;
+import com.example.trackingcore.domain.model.enums.PaymentMethod;
 import com.example.trackingcore.domain.port.DeliveryGateway;
+import com.example.trackingcore.domain.port.DeliveryTrackResult;
 import com.example.trackingcore.infrastructure.mapper.DeliveryInfraMapper;
 import com.example.trackingcore.infrastructure.persistence.appuser.AppUserJpaRepository;
 import com.example.trackingcore.infrastructure.persistence.delivery.DeliveryRepository;
@@ -75,5 +78,32 @@ public class DeliveryGatewayImpl implements DeliveryGateway {
         return deliveryRepository.findAllByAppUser_Id(appUserId).stream()
                 .map(DELIVERY_MAPPER::fromEntity)
                 .toList();
+    }
+
+    @Override
+    public Optional<DeliveryTrackResult> findTrackByPublicCodeClient(
+            final UUID publicCodeClient,
+            final String orderCode
+    ) {
+        return deliveryRepository.findByPublicCodeClientWithPaymentMethods(publicCodeClient)
+                .map(entity -> {
+                    final var delivery = DELIVERY_MAPPER.fromEntity(entity);
+
+                    final var order = delivery.getOrders().stream()
+                            .filter(o -> o.getDeliveryStatus() != OrderStatus.DELETED
+                                    && o.getDeliveryStatus() != OrderStatus.STANDBY)
+                            .filter(o -> o.getCode().equals(orderCode))
+                            .findFirst()
+                            .orElse(null);
+
+                    final List<PaymentMethod> availablePaymentMethods =
+                            entity.getAppUser() != null && entity.getAppUser().getPaymentMethods() != null
+                                    ? entity.getAppUser().getPaymentMethods().stream()
+                                            .map(pm -> PaymentMethod.valueOf(pm.getId()))
+                                            .toList()
+                                    : List.of();
+
+                    return new DeliveryTrackResult(order, delivery, availablePaymentMethods);
+                });
     }
 }

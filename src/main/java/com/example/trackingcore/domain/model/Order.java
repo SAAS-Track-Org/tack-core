@@ -98,6 +98,48 @@ public class Order {
                 this.createdAt, LocalDateTime.now());
     }
 
+    public Order withClientName(final String newClientName) {
+        final var updatedClient = this.client != null
+                ? this.client.withName(newClientName)
+                : Client.create(newClientName, null);
+        return new Order(this.id, this.deliveryId, this.code, updatedClient, this.deliveryAddress,
+                this.notes, this.status, this.deliveryStatus, this.totalAmount, this.paymentMethod,
+                this.createdAt, LocalDateTime.now());
+    }
+
+    /**
+     * Updates the order's address / payment data AND client contact data in one step.
+     * Any null argument falls back to the current value.
+     */
+    public Order updateClientTrackData(
+            final String clientName,
+            final String clientPhone,
+            final com.example.trackingcore.domain.model.enums.PaymentMethod paymentMethod,
+            final Address deliveryAddress
+    ) {
+        final var newStatus = deliveryAddress != null
+                ? AddressStatus.ADDRESS_CONFIRMED
+                : this.status;
+
+        final var updatedClient = this.client != null
+                ? this.client.withContact(
+                        clientName != null && !clientName.isBlank() ? clientName : this.client.getName(),
+                        clientPhone != null && !clientPhone.isBlank() ? clientPhone : this.client.getPhoneNumber()
+                  )
+                : Client.create(
+                        clientName != null ? clientName : "",
+                        clientPhone
+                  );
+
+        return new Order(
+                this.id, this.deliveryId, this.code, updatedClient,
+                deliveryAddress != null ? deliveryAddress : this.deliveryAddress,
+                this.notes, newStatus, this.deliveryStatus,
+                this.totalAmount, paymentMethod,
+                this.createdAt, LocalDateTime.now()
+        );
+    }
+
     public Order update(
             String notes,
             BigDecimal totalAmount,

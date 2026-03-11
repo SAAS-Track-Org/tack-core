@@ -35,10 +35,11 @@ public interface DeliveryOutputMapper {
     @Mapping(target = "addressStatus", source = "status")
     GetAllDeliveriesOutput.OrderOutput toSummaryOrderOutput(Order order);
 
-    @Mapping(target = "orderCode",   source = "code")
-    @Mapping(target = "clientName",  source = "client.name")
-    @Mapping(target = "clientPhone", source = "client.phoneNumber")
-    @Mapping(target = "address",     source = "deliveryAddress")
+    @Mapping(target = "orderCode",     source = "code")
+    @Mapping(target = "clientName",    source = "client.name")
+    @Mapping(target = "clientPhone",   source = "client.phoneNumber")
+    @Mapping(target = "addressStatus", source = "status")
+    @Mapping(target = "address",       source = "deliveryAddress")
     DriverDeliveryOutput.OrderOutput toDriverOrderOutput(Order order);
 
     // --- Delivery ---
